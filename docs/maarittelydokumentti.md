@@ -2,7 +2,7 @@
 Projekti toteutetaan Pythonilla. Vertaisarviointi onnistuu Pythonin lisäksi tarvittaessa myös Javalla.
 
 ## Projektin luonne
-Toteutan työssäni feed-forward neuroverkon, joka voidaan kouluttaa tunnistamaan MNIST-tietokannan käsinkirjoitettuja numeroita.
+Toteutan työssäni eteenpäin kytketyn neuroverkon, joka voidaan kouluttaa tunnistamaan MNIST-tietokannan käsinkirjoitettuja numeroita.
 Neuroverkon aika- ja tilavaativuus on verrannollinen verkon kokoon. Verkon syötteen (kuvan pikselit vektorina) koko on vakio, joten
 koulutetun verkon toimintaan (syötteet sisään -> tuloste ulos) kuluva aika on myös vakio.
 
