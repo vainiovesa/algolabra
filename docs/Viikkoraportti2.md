@@ -15,7 +15,7 @@ Neuroverkon gradientin, eli virhefunktion osittaisderivaatat painojen ja vakiote
 \frac{\partial C_X}{\partial w^{(l)}_{jk}}=\delta^{(l)}_ja^{(l+1)}_k\quad\text{ja}\quad
 \frac{\partial C_X}{\partial b^{(l)}_{jk}}=\delta^{(l)}_j,
 ```
-missä $` C_X `$ on virhefunktio syötteellä $` X `$, $` w^{(l)}_{jk} `$ on tason $` l `$ paino neuronista $` k `$ neuroniin $` j `$ ja $`a^{(l+1)}_k `$ on
+missä $` C_X `$ on virhefunktio syötteellä $` X `$, $` w^{(l)}_{jk} `$ on tason $` l `$ paino ja $` b^{(l)}_{jk} `$ vakiotermi neuronista $` k `$ neuroniin $` j `$ ja $`a^{(l+1)}_k `$ on
 tason $` l + 1 `$ neuronin $` k `$ aktivaatioarvo (syötteellä $` X `$). Lisäksi
 ```math
 \delta^{(l)}_j=\sum_k\delta^{(l+1)}_kw^{(l+1)}_{kj}a^{(l)}_j(1-a^{(l)}_j),
@@ -37,4 +37,4 @@ Määrittelydokumentissa mainitsemieni lähteiden lisäksi käytin [Wikipediassa
 ### Mitä teen seuraavaksi?
 
 ### Ajankäyttö
-Olen käyttänyt projektiin tällä viikolla noin 6 tuntia.
+Olen käyttänyt projektiin tällä viikolla noin 7 tuntia.
