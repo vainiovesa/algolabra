@@ -4,6 +4,7 @@ from math import sqrt
 class Network:
     def __init__(self, layers:list):
         self.n_inputs = layers[0]
+        self.n_layers = len(layers)
         self.weights = []
         self.biases = []
 
@@ -44,6 +45,33 @@ class Network:
             np.ndarray: Output layer activation of the neural network
         """
         return self.feed_forward(x)[-1]
+
+    def backward_pass(self, activations:list, a_hat:np.ndarray):
+        """Get all delta values for calculating the gradient w.r.t each weight and bias
+
+        Args:
+            activations (list): Activations of the network by the feed_forward-method
+            a_hat (np.ndarray): Desired output
+
+        Returns:
+            list: All delta values
+        """
+        delta_l = []
+
+        a = activations[-1]
+        delta_u = 2 * (a_hat - a) * a * (1 - a)
+        delta_l.append(delta_u)
+
+        for i in range(self.n_layers - 2, 0, -1):
+            a = activations[i - 1]
+            w = self.weights[i]
+            d = delta_l[-1]
+            sigmoid_derivative = a * (1 - a)
+            delta_weight_sums = np.dot(w.transpose(), d)
+            this_layer_delta = sigmoid_derivative * delta_weight_sums
+            delta_l.append(this_layer_delta)
+        delta_l.reverse()
+        return delta_l
 
 def glorot(n, m):
     """Weight initialization function suitable for the sigmoid activation function
