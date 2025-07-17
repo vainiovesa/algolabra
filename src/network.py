@@ -59,7 +59,7 @@ class Network:
         delta_l = []
 
         a = activations[-1]
-        delta_u = 2 * (a_hat - a) * a * (1 - a)
+        delta_u = 2 * (a - a_hat) * a * (1 - a)
         delta_l.append(delta_u)
 
         for i in range(self.n_layers - 2, 0, -1):
@@ -72,6 +72,37 @@ class Network:
             delta_l.append(this_layer_delta)
         delta_l.reverse()
         return delta_l
+
+    def gradient_calculation(self, x:np.ndarray, a_hat:np.ndarray):
+        """Get the gradient with respect to each weight and bias in the network
+
+        Args:
+            x (np.ndarray): Input
+            a_hat (np.ndarray): Expected output
+
+        Returns:
+            tuple: Two lists; gradient w.r.t weights and biases
+        """
+        activations = self.feed_forward(x)
+        deltas = self.backward_pass(activations, a_hat)
+        weight_derivatives = []
+
+        for delta, acts in zip(deltas, [x] + activations):
+            delta = delta.reshape((len(delta), 1))
+            weight_derivatives.append(delta * acts)
+        return weight_derivatives, deltas
+
+    def update_weights_and_biases(self, new_w:list, new_b:list, lr:float):
+        """Update all the weights and biases of the network to descend the gradient
+
+        Args:
+            new_w (list): Weight derivatives
+            new_b (list): Bias derivatives
+            lr (float): Learning rate
+        """
+        for i in range(self.n_layers - 1):
+            self.weights[i] -= lr * new_w[i]
+            self.biases[i] -= lr * new_b[i]
 
 def glorot(n, m):
     """Weight initialization function suitable for the sigmoid activation function
