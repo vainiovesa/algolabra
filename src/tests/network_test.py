@@ -6,6 +6,10 @@ class TestNetwork(unittest.TestCase):
     def setUp(self):
         self.layers = [10, 5, 6, 3, 4]
         self.net = Network(self.layers)
+        n = self.layers[0]
+        m = self.layers[-1]
+        self.inputs = np.array([1 for _ in range(n)])
+        self.output = np.array([1 for _ in range(m)])
 
     def test_weights_and_biases_right_type(self):
         for weight in self.net.weights:
@@ -21,14 +25,26 @@ class TestNetwork(unittest.TestCase):
             self.assertEqual(self.net.biases[i - 1].shape[0], self.layers[i])
 
     def test_activations_right_type(self):
-        inputs = np.array([1 for _ in range(self.layers[0])])
-        activations = self.net.feed_forward(inputs)
+        activations = self.net.feed_forward(self.inputs)
         for activation in activations:
             self.assertEqual(type(activation), np.ndarray)
 
     def test_activations_right_size(self):
-        inputs = np.array([1 for _ in range(self.layers[0])])
-        activations = [inputs]
-        activations += self.net.feed_forward(inputs)
+        activations = [self.inputs]
+        activations += self.net.feed_forward(self.inputs)
         for activation, layer in zip(activations, self.layers):
             self.assertEqual(len(activation), layer)
+
+    def test_deltas_right_size(self):
+        activations = self.net.feed_forward(self.inputs)
+        deltas = self.net.backward_pass(activations, self.output)
+        for d, a in zip(deltas, activations):
+            self.assertEqual(d.shape, a.shape)
+
+    def test_gradient_right_size(self):
+        x, y = self.inputs, self.output
+        weight_d, bias_d = self.net.gradient_calculation(x, y)
+        weights, biases = self.net.weights, self.net.biases
+        for wd, bd, w, b in zip(weight_d, bias_d, weights, biases):
+            self.assertEqual(wd.shape, w.shape)
+            self.assertEqual(bd.shape, b.shape)
