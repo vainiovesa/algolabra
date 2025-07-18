@@ -43,7 +43,7 @@ class TestNetwork(unittest.TestCase):
 
     def test_gradient_right_size(self):
         x, y = self.inputs, self.output
-        weight_d, bias_d = self.net.gradient_calculation(x, y)
+        weight_d, bias_d, _ = self.net.gradient_calculation(x, y)
         weights, biases = self.net.weights, self.net.biases
         for wd, bd, w, b in zip(weight_d, bias_d, weights, biases):
             self.assertEqual(wd.shape, w.shape)
