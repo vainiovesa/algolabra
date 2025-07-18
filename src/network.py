@@ -1,5 +1,6 @@
 import numpy as np
 from math import sqrt
+from random import shuffle
 
 class Network:
     def __init__(self, layers:list):
@@ -50,11 +51,11 @@ class Network:
         """Quadratic loss function
 
         Args:
-            a (np.ndarray): output
-            a_hat (np.ndarray): expected output
+            a (np.ndarray): Output
+            a_hat (np.ndarray): Expected output
 
         Returns:
-            np.float64: loss value
+            np.float64: Loss value
         """
         return np.sum((a - a_hat) ** 2)
 
@@ -93,16 +94,58 @@ class Network:
             a_hat (np.ndarray): Expected output
 
         Returns:
-            tuple: Two lists; gradient w.r.t weights and biases
+            tuple: Two lists and np.float64; gradient w.r.t weights and biases, loss
         """
         activations = self.feed_forward(x)
+        loss = self.loss(activations[-1], a_hat)
         deltas = self.backward_pass(activations, a_hat)
         weight_derivatives = []
 
         for delta, acts in zip(deltas, [x] + activations):
             delta = delta.reshape((len(delta), 1))
             weight_derivatives.append(delta * acts)
-        return weight_derivatives, deltas
+        return weight_derivatives, deltas, loss
+
+    def vanilla_gradient_descent(self, training_data:list, epochs:int, lr:float):
+        """Gradient descent for training the neural network. The weights and biases are
+        updated only after going through the whole training data set.
+
+        Args:
+            training_data (list): List of tuples; inputs and expected outputs
+            epochs (int): Number of times the data set is iterated through 
+            lr (float): Learning rate
+
+        Returns:
+            list: Mean loss value of each epoch
+        """
+        learning_data = []
+        n = len(training_data)
+        training_data = training_data.copy()
+
+        for _ in range(epochs):
+            shuffle(training_data)
+
+            gradient_wrt_weights = [np.zeros_like(w) for w in self.weights]
+            gradient_wrt_biases = [np.zeros_like(b) for b in self.biases]
+            loss_this_epoch = 0
+
+            for inp, ex in training_data:
+                weight_derivatives, bias_derivatives, loss = self.gradient_calculation(inp, ex)
+                loss_this_epoch += loss
+
+                for i in range(self.n_layers - 1):
+                    gradient_wrt_weights[i] += weight_derivatives[i]
+                    gradient_wrt_biases[i] += bias_derivatives[i]
+
+            for i in range(self.n_layers - 1):
+                gradient_wrt_weights[i] /= n
+                gradient_wrt_biases[i] /= n
+            loss_this_epoch /= n
+
+            learning_data.append(loss_this_epoch)
+            self.update_weights_and_biases(gradient_wrt_weights, gradient_wrt_biases, lr)
+
+        return learning_data
 
     def update_weights_and_biases(self, new_w:list, new_b:list, lr:float):
         """Update all the weights and biases of the network to descend the gradient
