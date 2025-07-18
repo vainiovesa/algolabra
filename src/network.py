@@ -46,6 +46,18 @@ class Network:
         """
         return self.feed_forward(x)[-1]
 
+    def loss(self, a:np.ndarray, a_hat:np.ndarray):
+        """Quadratic loss function
+
+        Args:
+            a (np.ndarray): output
+            a_hat (np.ndarray): expected output
+
+        Returns:
+            np.float64: loss value
+        """
+        return np.sum((a - a_hat) ** 2)
+
     def backward_pass(self, activations:list, a_hat:np.ndarray):
         """Get all delta values for calculating the gradient w.r.t each weight and bias
 
