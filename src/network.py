@@ -147,6 +147,37 @@ class Network:
 
         return learning_data
 
+    def stochastic_gradient_descent(self, training_data:list, epochs:int, lr:float):
+        """Gradient descent for training the neural network. The weights and biases are
+        updated after every training example.
+
+        Args:
+            training_data (list): List of tuples; inputs and expected outputs
+            epochs (int): Number of times the data set is iterated through 
+            lr (float): Learning rate
+
+        Returns:
+            list: Mean loss value of each epoch
+        """
+        learning_data = []
+        n = len(training_data)
+        training_data = training_data.copy()
+
+        for _ in range(epochs):
+            shuffle(training_data)
+
+            loss_this_epoch = 0
+
+            for inp, ex in training_data:
+                weight_derivatives, bias_derivatives, loss = self.gradient_calculation(inp, ex)
+                loss_this_epoch += loss
+                self.update_weights_and_biases(weight_derivatives, bias_derivatives, lr)
+
+            loss_this_epoch /= n
+            learning_data.append(loss_this_epoch)
+
+        return learning_data
+
     def update_weights_and_biases(self, new_w:list, new_b:list, lr:float):
         """Update all the weights and biases of the network to descend the gradient
 
