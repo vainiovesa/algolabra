@@ -3,14 +3,30 @@ from math import sqrt
 from random import shuffle
 
 class Network:
+    """Neural network class.
+
+    Approximates arbitrary functions by learning from training data with gradient descent.
+    Uses the sigmoid activation function and squared error.
+
+    Attributes:
+        n_inputs (int): Length of the array the network takes as input. 
+        n_layers (int): Number of layers of the network.
+        weights (list): List of np.ndarray; weight arrays.
+        biases (list): List of np.ndarray; bias arrays.
+    """
+
     def __init__(self, layers:list):
+        """Class constructor for the neural network.
+
+        Args:
+            layers (list): List of integers; Lengths of the input layer, hidden layers and the output layer.
+        """
         self.n_inputs = layers[0]
         self.n_layers = len(layers)
         self.weights = []
         self.biases = []
 
-        n = len(layers)
-        for i in range(1, n):
+        for i in range(1, self.n_layers):
             weights = glorot(layers[i - 1], layers[i])
             self.weights.append(weights)
 
@@ -18,13 +34,13 @@ class Network:
             self.biases.append(biases)
 
     def feed_forward(self, x:np.ndarray):
-        """Get all activations of the neural network with input x
+        """Get all activations of the neural network with input x.
 
         Args:
-            x (np.ndarray): Input for the neural network
+            x (np.ndarray): Input for the neural network.
 
         Returns:
-            list: All activations of the neural network
+            list: List of np.ndarray; activations of each layer of the neural network.
         """
         assert(len(x) == self.n_inputs)
 
@@ -37,37 +53,37 @@ class Network:
         return activations
 
     def evaluate(self, x:np.ndarray):
-        """Get the activation of the neural network with input x
+        """Get the activation of the neural network with input x.
 
         Args:
-            x (np.ndarray): Input for the neural network
+            x (np.ndarray): Input for the neural network.
 
         Returns:
-            np.ndarray: Output layer activation of the neural network
+            np.ndarray: Output layer activation of the neural network.
         """
         return self.feed_forward(x)[-1]
 
     def loss(self, a:np.ndarray, a_hat:np.ndarray):
-        """Quadratic loss function
+        """Quadratic loss function.
 
         Args:
-            a (np.ndarray): Output
-            a_hat (np.ndarray): Expected output
+            a (np.ndarray): Output.
+            a_hat (np.ndarray): Expected output.
 
         Returns:
-            np.float64: Loss value
+            np.float64: Loss value.
         """
         return np.sum((a - a_hat) ** 2)
 
     def backward_pass(self, activations:list, a_hat:np.ndarray):
-        """Get all delta values for calculating the gradient w.r.t each weight and bias
+        """Get all delta values for calculating the gradient w.r.t each weight and bias.
 
         Args:
-            activations (list): Activations of the network by the feed_forward-method
-            a_hat (np.ndarray): Desired output
+            activations (list): List of np.ndarray; activations of each layer of the network by the feed_forward-method.
+            a_hat (np.ndarray): Desired output.
 
         Returns:
-            list: All delta values
+            list: List of np.ndarray; all delta values.
         """
         delta_l = []
 
@@ -87,14 +103,14 @@ class Network:
         return delta_l
 
     def gradient_calculation(self, x:np.ndarray, a_hat:np.ndarray):
-        """Get the gradient with respect to each weight and bias in the network
+        """Get the gradient with respect to each weight and bias in the network.
 
         Args:
-            x (np.ndarray): Input
-            a_hat (np.ndarray): Expected output
+            x (np.ndarray): Input.
+            a_hat (np.ndarray): Expected output.
 
         Returns:
-            tuple: Two lists and np.float64; gradient w.r.t weights and biases, loss
+            tuple: Two lists and np.float64; gradient w.r.t the weights and biases, loss.
         """
         activations = self.feed_forward(x)
         loss = self.loss(activations[-1], a_hat)
@@ -107,16 +123,17 @@ class Network:
         return weight_derivatives, deltas, loss
 
     def vanilla_gradient_descent(self, training_data:list, epochs:int, lr:float):
-        """Gradient descent for training the neural network. The weights and biases are
-        updated only after going through the whole training data set.
+        """Gradient descent for training the neural network. 
+        
+        The weights and biases are updated only after going through the whole training data set.
 
         Args:
-            training_data (list): List of tuples; inputs and expected outputs
-            epochs (int): Number of times the data set is iterated through 
-            lr (float): Learning rate
+            training_data (list): List of tuples; tuples of np.ndarray; inputs and expected outputs.
+            epochs (int): Number of times the data set is iterated through.
+            lr (float): Learning rate.
 
         Returns:
-            list: Mean loss value of each epoch
+            list: List of np.float64; mean loss value of each epoch.
         """
         learning_data = []
         n = len(training_data)
@@ -148,16 +165,17 @@ class Network:
         return learning_data
 
     def stochastic_gradient_descent(self, training_data:list, epochs:int, lr:float):
-        """Gradient descent for training the neural network. The weights and biases are
-        updated after every training example.
+        """Gradient descent for training the neural network.
+        
+        The weights and biases are updated after every training example.
 
         Args:
-            training_data (list): List of tuples; inputs and expected outputs
-            epochs (int): Number of times the data set is iterated through 
-            lr (float): Learning rate
+            training_data (list): List of tuples; tuples of np.ndarray; inputs and expected outputs.
+            epochs (int): Number of times the data set is iterated through.
+            lr (float): Learning rate.
 
         Returns:
-            list: Mean loss value of each epoch
+            list: List of np.float64; mean loss value of each epoch.
         """
         learning_data = []
         n = len(training_data)
@@ -179,17 +197,18 @@ class Network:
         return learning_data
 
     def minibatch_gradient_descent(self, training_data:list, minibatch_size:int, epochs:int, lr:float):
-        """Gradient descent for training the neural network. The training data is split into batches and
-        the weights and biases are updated after each one.
+        """Gradient descent for training the neural network.
+        
+        The training data is split into batches and the weights and biases are updated after each one.
 
         Args:
-            training_data (list): List of tuples; inputs and expected outputs
-            minibatch_size (int): Number of training examples in one mini batch
-            epochs (int): Number of times the data set is iterated through 
-            lr (float): Learning rate
+            training_data (list): List of tuples; tuples of np.ndarray; inputs and expected outputs.
+            minibatch_size (int): Number of training examples in one mini batch.
+            epochs (int): Number of times the data set is iterated through.
+            lr (float): Learning rate.
 
         Returns:
-            list: Mean loss value of each epoch
+            list: List of np.float64; mean loss value of each epoch.
         """
         learning_data = []
         n = len(training_data)
@@ -225,38 +244,38 @@ class Network:
         return learning_data
 
     def update_weights_and_biases(self, new_w:list, new_b:list, lr:float):
-        """Update all the weights and biases of the network to descend the gradient
+        """Update all the weights and biases of the network to descend the gradient.
 
         Args:
-            new_w (list): Weight derivatives
-            new_b (list): Bias derivatives
-            lr (float): Learning rate
+            new_w (list): List of np.ndarray; weight derivatives.
+            new_b (list): List of np.ndarray; bias derivatives.
+            lr (float): Learning rate.
         """
         for i in range(self.n_layers - 1):
             self.weights[i] -= lr * new_w[i]
             self.biases[i] -= lr * new_b[i]
 
 def glorot(n, m):
-    """Weight initialization function suitable for the sigmoid activation function
+    """Weight initialization function suitable for neural network layers using the sigmoid activation function.
 
     Args:
-        n (int): Number of inputs for this layer ("fan-in")
-        m (int): Number of outputs (neurons) for this layer ("fan_out")
+        n (int): Number of inputs for this layer ("fan-in").
+        m (int): Number of outputs (neurons) for this layer ("fan_out").
 
     Returns:
-        np.ndarray: Weights for this layer
+        np.ndarray: Weights for this layer.
     """
     b = sqrt(6 / (n + m))
     a = - b
     return np.random.uniform(a, b, (m, n))
 
 def sigmoid(z:np.ndarray):
-    """Activation function for the neural network to introduce nonlinearity
+    """Activation function for the neural network to introduce nonlinearity.
 
     Args:
-        z (np.ndarray): Weighted sum
+        z (np.ndarray): Weighted sum.
 
     Returns:
-        np.ndarray: Vector of values between zero and one
+        np.ndarray: Array of values between zero and one.
     """
     return 1 / (1 + np.exp(-z))
