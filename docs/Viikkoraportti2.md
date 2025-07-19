@@ -56,4 +56,4 @@ Vielä ei ole tullut vastaan suurempia ongelmia.
 Seuraavaksi otan MNIST-tietokannan osaksi ohjelmaa.
 
 ### Ajankäyttö
-Olen käyttänyt projektiin tällä viikolla noin 18 tuntia.
+Olen käyttänyt projektiin tällä viikolla noin 20 tuntia.
