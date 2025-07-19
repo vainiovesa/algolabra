@@ -5,10 +5,10 @@ Tällä viikolla olen:
 * Suunnitellut neuroverkon rakenteen
 * Aloittanut projektin ydinalueen kehityksen
 * Toteuttanut neuroverkon eteenpäin kytkennän
-* Toteuttanut perinteisen gradienttimenetelmän
+* Toteuttanut perinteisen, stokastisen ja minisatsi gradienttimenetelmän
 
 ### Miten ohjelma on edistynyt?
-Nyt neuroverkko sekä toimii eteenpäin kytkettynä, että oppii datasta perinteisen gradienttimenetelmän avulla.
+Nyt neuroverkko sekä toimii eteenpäin kytkettynä, että oppii datasta gradienttimenetelmien avulla.
 
 ### Mitä opin tällä viikolla?
 Neuroverkon gradientin, eli virhefunktion osittaisderivaatat painojen ja vakiotermien suhteen laskeminen käy kätevästi kaavoilla
@@ -56,4 +56,4 @@ Vielä ei ole tullut vastaan suurempia ongelmia.
 Seuraavaksi otan MNIST-tietokannan osaksi ohjelmaa.
 
 ### Ajankäyttö
-Olen käyttänyt projektiin tällä viikolla noin 16 tuntia.
+Olen käyttänyt projektiin tällä viikolla noin 18 tuntia.
