@@ -178,6 +178,52 @@ class Network:
 
         return learning_data
 
+    def minibatch_gradient_descent(self, training_data:list, minibatch_size:int, epochs:int, lr:float):
+        """Gradient descent for training the neural network. The training data is split into batches and
+        the weights and biases are updated after each one.
+
+        Args:
+            training_data (list): List of tuples; inputs and expected outputs
+            minibatch_size (int): Number of training examples in one mini batch
+            epochs (int): Number of times the data set is iterated through 
+            lr (float): Learning rate
+
+        Returns:
+            list: Mean loss value of each epoch
+        """
+        learning_data = []
+        n = len(training_data)
+        training_data = training_data.copy()
+
+        for _ in range(epochs):
+            shuffle(training_data)
+
+            loss_this_epoch = 0
+            minibatches = [training_data[i:i+minibatch_size] for i in range(0, n, minibatch_size)]
+
+            for minibatch in minibatches:
+                gradient_wrt_weights = [np.zeros_like(w) for w in self.weights]
+                gradient_wrt_biases = [np.zeros_like(b) for b in self.biases]
+
+                for inp, ex in minibatch:
+                    weight_derivatives, bias_derivatives, loss = self.gradient_calculation(inp, ex)
+                    loss_this_epoch += loss
+
+                    for i in range(self.n_layers - 1):
+                        gradient_wrt_weights[i] += weight_derivatives[i]
+                        gradient_wrt_biases[i] += bias_derivatives[i]
+
+                for i in range(self.n_layers - 1):
+                    gradient_wrt_weights[i] /= minibatch_size
+                    gradient_wrt_biases[i] /= minibatch_size
+
+                self.update_weights_and_biases(gradient_wrt_weights, gradient_wrt_biases, lr)
+
+            loss_this_epoch /= n
+            learning_data.append(loss_this_epoch)
+
+        return learning_data
+
     def update_weights_and_biases(self, new_w:list, new_b:list, lr:float):
         """Update all the weights and biases of the network to descend the gradient
 
