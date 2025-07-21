@@ -14,4 +14,4 @@ Tällä viikolla olen:
 ### Mitä teen seuraavaksi?
 
 ### Ajankäyttö
-Olen käyttänyt projektiin tällä viikolla noin 3 tuntia.
+Olen käyttänyt projektiin tällä viikolla noin 5 tuntia.
