@@ -1,6 +1,7 @@
-import numpy as np
 from math import sqrt
 from random import shuffle
+import numpy as np
+
 
 class Network:
     """Neural network class.
@@ -15,11 +16,12 @@ class Network:
         biases (list): List of np.ndarray; bias arrays.
     """
 
-    def __init__(self, layers:list):
+    def __init__(self, layers: list):
         """Class constructor for the neural network.
 
         Args:
-            layers (list): List of integers; Lengths of the input layer, hidden layers and the output layer.
+            layers (list): List of integers; Lengths of the input layer, hidden layers and the
+            output layer.
         """
         self.n_inputs = layers[0]
         self.n_layers = len(layers)
@@ -33,7 +35,7 @@ class Network:
             biases = np.zeros(layers[i])
             self.biases.append(biases)
 
-    def feed_forward(self, x:np.ndarray):
+    def feed_forward(self, x: np.ndarray):
         """Get all activations of the neural network with input x.
 
         Args:
@@ -42,7 +44,7 @@ class Network:
         Returns:
             list: List of np.ndarray; activations of each layer of the neural network.
         """
-        assert(len(x) == self.n_inputs)
+        assert len(x) == self.n_inputs
 
         activations = []
         for w, b in zip(self.weights, self.biases):
@@ -52,7 +54,7 @@ class Network:
             x = a
         return activations
 
-    def evaluate(self, x:np.ndarray):
+    def evaluate(self, x: np.ndarray):
         """Get the activation of the neural network with input x.
 
         Args:
@@ -63,7 +65,7 @@ class Network:
         """
         return self.feed_forward(x)[-1]
 
-    def loss(self, a:np.ndarray, a_hat:np.ndarray):
+    def loss(self, a: np.ndarray, a_hat: np.ndarray):
         """Quadratic loss function.
 
         Args:
@@ -75,11 +77,12 @@ class Network:
         """
         return np.sum((a - a_hat) ** 2)
 
-    def backward_pass(self, activations:list, a_hat:np.ndarray):
+    def backward_pass(self, activations: list, a_hat: np.ndarray):
         """Get all delta values for calculating the gradient w.r.t each weight and bias.
 
         Args:
-            activations (list): List of np.ndarray; activations of each layer of the network by the feed_forward-method.
+            activations (list): List of np.ndarray; activations of each layer of the network by the
+            feed_forward-method.
             a_hat (np.ndarray): Desired output.
 
         Returns:
@@ -102,7 +105,7 @@ class Network:
         delta_l.reverse()
         return delta_l
 
-    def gradient_calculation(self, x:np.ndarray, a_hat:np.ndarray):
+    def gradient_calculation(self, x: np.ndarray, a_hat: np.ndarray):
         """Get the gradient with respect to each weight and bias in the network.
 
         Args:
@@ -122,9 +125,9 @@ class Network:
             weight_derivatives.append(delta * acts)
         return weight_derivatives, deltas, loss
 
-    def vanilla_gradient_descent(self, training_data:list, epochs:int, lr:float):
+    def vanilla_gradient_descent(self, training_data: list, epochs: int, lr: float):
         """Gradient descent for training the neural network. 
-        
+
         The weights and biases are updated only after going through the whole training data set.
 
         Args:
@@ -147,7 +150,8 @@ class Network:
             loss_this_epoch = 0
 
             for inp, ex in training_data:
-                weight_derivatives, bias_derivatives, loss = self.gradient_calculation(inp, ex)
+                weight_derivatives, bias_derivatives, loss = self.gradient_calculation(
+                    inp, ex)
                 loss_this_epoch += loss
 
                 for i in range(self.n_layers - 1):
@@ -160,13 +164,14 @@ class Network:
             loss_this_epoch /= n
 
             learning_data.append(loss_this_epoch)
-            self.update_weights_and_biases(gradient_wrt_weights, gradient_wrt_biases, lr)
+            self.update_weights_and_biases(
+                gradient_wrt_weights, gradient_wrt_biases, lr)
 
         return learning_data
 
-    def stochastic_gradient_descent(self, training_data:list, epochs:int, lr:float):
+    def stochastic_gradient_descent(self, training_data: list, epochs: int, lr: float):
         """Gradient descent for training the neural network.
-        
+
         The weights and biases are updated after every training example.
 
         Args:
@@ -187,19 +192,26 @@ class Network:
             loss_this_epoch = 0
 
             for inp, ex in training_data:
-                weight_derivatives, bias_derivatives, loss = self.gradient_calculation(inp, ex)
+                weight_derivatives, bias_derivatives, loss = self.gradient_calculation(
+                    inp, ex)
                 loss_this_epoch += loss
-                self.update_weights_and_biases(weight_derivatives, bias_derivatives, lr)
+                self.update_weights_and_biases(
+                    weight_derivatives, bias_derivatives, lr)
 
             loss_this_epoch /= n
             learning_data.append(loss_this_epoch)
 
         return learning_data
 
-    def minibatch_gradient_descent(self, training_data:list, minibatch_size:int, epochs:int, lr:float):
+    def minibatch_gradient_descent(self,
+                                   training_data: list,
+                                   minibatch_size: int,
+                                   epochs: int,
+                                   lr: float):
         """Gradient descent for training the neural network.
-        
-        The training data is split into batches and the weights and biases are updated after each one.
+
+        The training data is split into batches and the weights and biases are updated after each
+        one.
 
         Args:
             training_data (list): List of tuples; tuples of np.ndarray; inputs and expected outputs.
@@ -218,14 +230,16 @@ class Network:
             shuffle(training_data)
 
             loss_this_epoch = 0
-            minibatches = [training_data[i:i+minibatch_size] for i in range(0, n, minibatch_size)]
+            minibatches = [training_data[i:i+minibatch_size]
+                           for i in range(0, n, minibatch_size)]
 
             for minibatch in minibatches:
                 gradient_wrt_weights = [np.zeros_like(w) for w in self.weights]
                 gradient_wrt_biases = [np.zeros_like(b) for b in self.biases]
 
                 for inp, ex in minibatch:
-                    weight_derivatives, bias_derivatives, loss = self.gradient_calculation(inp, ex)
+                    weight_derivatives, bias_derivatives, loss = \
+                        self.gradient_calculation(inp, ex)
                     loss_this_epoch += loss
 
                     for i in range(self.n_layers - 1):
@@ -236,14 +250,15 @@ class Network:
                     gradient_wrt_weights[i] /= minibatch_size
                     gradient_wrt_biases[i] /= minibatch_size
 
-                self.update_weights_and_biases(gradient_wrt_weights, gradient_wrt_biases, lr)
+                self.update_weights_and_biases(
+                    gradient_wrt_weights, gradient_wrt_biases, lr)
 
             loss_this_epoch /= n
             learning_data.append(loss_this_epoch)
 
         return learning_data
 
-    def update_weights_and_biases(self, new_w:list, new_b:list, lr:float):
+    def update_weights_and_biases(self, new_w: list, new_b: list, lr: float):
         """Update all the weights and biases of the network to descend the gradient.
 
         Args:
@@ -255,8 +270,10 @@ class Network:
             self.weights[i] -= lr * new_w[i]
             self.biases[i] -= lr * new_b[i]
 
+
 def glorot(n, m):
-    """Weight initialization function suitable for neural network layers using the sigmoid activation function.
+    """Weight initialization function suitable for neural network layers using the sigmoid
+    activation function.
 
     Args:
         n (int): Number of inputs for this layer ("fan-in").
@@ -269,7 +286,8 @@ def glorot(n, m):
     a = - b
     return np.random.uniform(a, b, (m, n))
 
-def sigmoid(z:np.ndarray):
+
+def sigmoid(z: np.ndarray):
     """Activation function for the neural network to introduce nonlinearity.
 
     Args:

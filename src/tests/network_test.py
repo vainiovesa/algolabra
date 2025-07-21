@@ -2,6 +2,7 @@ import unittest
 import numpy as np
 from network import Network
 
+
 class TestNetwork(unittest.TestCase):
     def setUp(self):
         self.layers = [10, 5, 6, 3, 4]
@@ -28,7 +29,8 @@ class TestNetwork(unittest.TestCase):
         n = len(self.layers)
         for i in range(1, n):
             self.assertEqual(self.net.weights[i - 1].shape[0], self.layers[i])
-            self.assertEqual(self.net.weights[i - 1].shape[1], self.layers[i - 1])
+            self.assertEqual(
+                self.net.weights[i - 1].shape[1], self.layers[i - 1])
             self.assertEqual(self.net.biases[i - 1].shape[0], self.layers[i])
 
     def test_activations_right_type(self):
@@ -58,7 +60,8 @@ class TestNetwork(unittest.TestCase):
 
     def test_vanilla_gradient_descends(self):
         ep = 2000
-        learning_data = self.small_net.vanilla_gradient_descent(self.data, ep, self.lr)
+        learning_data = self.small_net.vanilla_gradient_descent(
+            self.data, ep, self.lr)
         for i in range(1, ep):
             self.assertLess(learning_data[i], learning_data[i - 1])
         for x, y in self.data:
@@ -67,7 +70,8 @@ class TestNetwork(unittest.TestCase):
 
     def test_stochastic_gradient_descends(self):
         ep = 1000
-        learning_data = self.small_net.stochastic_gradient_descent(self.data, ep, self.lr)
+        learning_data = self.small_net.stochastic_gradient_descent(
+            self.data, ep, self.lr)
         self.assertLess(learning_data[-1], learning_data[ep // 2])
         self.assertLess(learning_data[ep // 2], learning_data[0])
         for x, y in self.data:
@@ -77,7 +81,8 @@ class TestNetwork(unittest.TestCase):
     def test_minibatch_gradient_descends(self):
         ep = 1500
         mb_size = 2
-        learning_data = self.small_net.minibatch_gradient_descent(self.data, mb_size, ep, self.lr)
+        learning_data = self.small_net.minibatch_gradient_descent(
+            self.data, mb_size, ep, self.lr)
         self.assertLess(learning_data[-1], learning_data[ep // 2])
         self.assertLess(learning_data[ep // 2], learning_data[0])
         for x, y in self.data:
