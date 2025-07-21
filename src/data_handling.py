@@ -16,8 +16,7 @@ def get_data(path: str = "../data/mnist.pkl.gz"):
         in format [(x, y), ...], ...
     """
     with gzip.open(path) as file:
-        file = pickle._Unpickler(file, encoding="latin1")
-        tr_data, va_data, te_data = file.load()
+        tr_data, va_data, te_data = pickle.load(file, encoding="latin1")
 
     training_data, validation_data, testing_data = data_converter(
         tr_data, va_data, te_data)
