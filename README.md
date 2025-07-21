@@ -5,3 +5,5 @@
 [Viikkoraportti 1](https://github.com/vainiovesa/algolabra/blob/main/docs/Viikkoraportti1.md)
 
 [Viikkoraportti 2](https://github.com/vainiovesa/algolabra/blob/main/docs/Viikkoraportti2.md)
+
+[Viikkoraportti 3](https://github.com/vainiovesa/algolabra/blob/main/docs/Viikkoraportti3.md)
