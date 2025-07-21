@@ -125,20 +125,28 @@ class Network:
             weight_derivatives.append(delta * acts)
         return weight_derivatives, deltas, loss
 
-    def vanilla_gradient_descent(self, training_data: list, epochs: int, lr: float):
+    def vanilla_gradient_descent(self,
+                                 training_data: list,
+                                 validation_data: list,
+                                 epochs: int,
+                                 lr: float):
         """Gradient descent for training the neural network. 
 
         The weights and biases are updated only after going through the whole training data set.
 
         Args:
             training_data (list): List of tuples; tuples of np.ndarray; inputs and expected outputs.
+            validation_data (list): List of tuples; tuples of np.ndarray; inputs and expected
+            outputs.
             epochs (int): Number of times the data set is iterated through.
             lr (float): Learning rate.
 
         Returns:
-            list: List of np.float64; mean loss value of each epoch.
+            tuple: Tuple of list; list of np.float64; mean loss and validation loss value of each
+            epoch.
         """
-        learning_data = []
+        training_loss = []
+        validation_loss = []
         n = len(training_data)
         training_data = training_data.copy()
 
@@ -150,9 +158,9 @@ class Network:
             loss_this_epoch = 0
 
             for inp, ex in training_data:
-                weight_derivatives, bias_derivatives, loss = self.gradient_calculation(
+                weight_derivatives, bias_derivatives, training_loss = self.gradient_calculation(
                     inp, ex)
-                loss_this_epoch += loss
+                loss_this_epoch += training_loss
 
                 for i in range(self.n_layers - 1):
                     gradient_wrt_weights[i] += weight_derivatives[i]
@@ -161,28 +169,38 @@ class Network:
             for i in range(self.n_layers - 1):
                 gradient_wrt_weights[i] /= n
                 gradient_wrt_biases[i] /= n
-            loss_this_epoch /= n
 
-            learning_data.append(loss_this_epoch)
+            loss_this_epoch /= n
+            training_loss.append(loss_this_epoch)
+            validation_loss.append(self.validation_loss(validation_data))
+
             self.update_weights_and_biases(
                 gradient_wrt_weights, gradient_wrt_biases, lr)
 
-        return learning_data
+        return training_loss, validation_loss
 
-    def stochastic_gradient_descent(self, training_data: list, epochs: int, lr: float):
+    def stochastic_gradient_descent(self,
+                                    training_data: list,
+                                    validation_data: list,
+                                    epochs: int,
+                                    lr: float):
         """Gradient descent for training the neural network.
 
         The weights and biases are updated after every training example.
 
         Args:
             training_data (list): List of tuples; tuples of np.ndarray; inputs and expected outputs.
+            validation_data (list): List of tuples; tuples of np.ndarray; inputs and expected
+            outputs.
             epochs (int): Number of times the data set is iterated through.
             lr (float): Learning rate.
 
         Returns:
-            list: List of np.float64; mean loss value of each epoch.
+            tuple: Tuple of list; list of np.float64; mean loss and validation loss value of each
+            epoch.
         """
-        learning_data = []
+        training_loss = []
+        validation_loss = []
         n = len(training_data)
         training_data = training_data.copy()
 
@@ -199,12 +217,14 @@ class Network:
                     weight_derivatives, bias_derivatives, lr)
 
             loss_this_epoch /= n
-            learning_data.append(loss_this_epoch)
+            training_loss.append(loss_this_epoch)
+            validation_loss.append(self.validation_loss(validation_data))
 
-        return learning_data
+        return training_loss, validation_loss
 
     def minibatch_gradient_descent(self,
                                    training_data: list,
+                                   validation_data: list,
                                    minibatch_size: int,
                                    epochs: int,
                                    lr: float):
@@ -215,14 +235,18 @@ class Network:
 
         Args:
             training_data (list): List of tuples; tuples of np.ndarray; inputs and expected outputs.
+            validation_data (list): List of tuples; tuples of np.ndarray; inputs and expected
+            outputs.
             minibatch_size (int): Number of training examples in one mini batch.
             epochs (int): Number of times the data set is iterated through.
             lr (float): Learning rate.
 
         Returns:
-            list: List of np.float64; mean loss value of each epoch.
+            tuple: Tuple of list; list of np.float64; mean loss and validation loss value of each
+            epoch.
         """
-        learning_data = []
+        training_loss = []
+        validation_loss = []
         n = len(training_data)
         training_data = training_data.copy()
 
@@ -254,9 +278,10 @@ class Network:
                     gradient_wrt_weights, gradient_wrt_biases, lr)
 
             loss_this_epoch /= n
-            learning_data.append(loss_this_epoch)
+            training_loss.append(loss_this_epoch)
+            validation_loss.append(self.validation_loss(validation_data))
 
-        return learning_data
+        return training_loss, validation_loss
 
     def update_weights_and_biases(self, new_w: list, new_b: list, lr: float):
         """Update all the weights and biases of the network to descend the gradient.
@@ -269,6 +294,23 @@ class Network:
         for i in range(self.n_layers - 1):
             self.weights[i] -= lr * new_w[i]
             self.biases[i] -= lr * new_b[i]
+
+    def validation_loss(self, validation_data:list):
+        """Get mean loss value of the network over the validation data set.
+
+        Args:
+            validation_data (list): List of tuples; tuples of np.ndarray; inputs and expected
+            outputs.
+
+        Returns:
+            np.float64: Mean loss value.
+        """
+        loss = 0
+        for x, y in validation_data:
+            activation = self.evaluate(x)
+            loss += self.loss(activation, y)
+        loss /= len(validation_data)
+        return loss
 
 
 def glorot(n, m):
