@@ -3,13 +3,13 @@ import pickle
 import numpy as np
 
 
-def get_data(path: str = "../data/mnist.pkl.gz"):
+def get_data(path: str = "data/mnist.pkl.gz"):
     """Get training, validation and testing data from the mnist data set.
 
     Format compatible with training a neural network of network.Network class.
 
     Args:
-        path (str, optional): Path to mnist. Defaults to "../data/mnist.pkl.gz".
+        path (str, optional): Path to mnist. Defaults to "data/mnist.pkl.gz".
 
     Returns:
         tuple: Tuple of three lists; list of tuple; tuple of np.ndarray; Inputs and expected outputs
