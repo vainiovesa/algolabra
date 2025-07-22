@@ -60,7 +60,7 @@ class TestNetwork(unittest.TestCase):
 
     def test_vanilla_gradient_descends(self):
         ep = 2000
-        learning_data = self.small_net.vanilla_gradient_descent(
+        learning_data, _ = self.small_net.vanilla_gradient_descent(
             self.data, ep, self.lr)
         for i in range(1, ep):
             self.assertLess(learning_data[i], learning_data[i - 1])
@@ -70,7 +70,7 @@ class TestNetwork(unittest.TestCase):
 
     def test_stochastic_gradient_descends(self):
         ep = 1000
-        learning_data = self.small_net.stochastic_gradient_descent(
+        learning_data, _ = self.small_net.stochastic_gradient_descent(
             self.data, ep, self.lr)
         self.assertLess(learning_data[-1], learning_data[ep // 2])
         self.assertLess(learning_data[ep // 2], learning_data[0])
@@ -81,7 +81,7 @@ class TestNetwork(unittest.TestCase):
     def test_minibatch_gradient_descends(self):
         ep = 1500
         mb_size = 2
-        learning_data = self.small_net.minibatch_gradient_descent(
+        learning_data, _ = self.small_net.minibatch_gradient_descent(
             self.data, mb_size, ep, self.lr)
         self.assertLess(learning_data[-1], learning_data[ep // 2])
         self.assertLess(learning_data[ep // 2], learning_data[0])
