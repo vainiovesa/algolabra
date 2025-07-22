@@ -1,3 +1,4 @@
+import pickle
 from math import sqrt
 from random import shuffle
 import numpy as np
@@ -229,7 +230,7 @@ class Network:
                                    minibatch_size: int,
                                    epochs: int,
                                    lr: float,
-                                   validation_data: list=None):
+                                   validation_data: list = None):
         """Gradient descent for training the neural network.
 
         The training data is split into batches and the weights and biases are updated after each
@@ -298,7 +299,7 @@ class Network:
             self.weights[i] -= lr * new_w[i]
             self.biases[i] -= lr * new_b[i]
 
-    def validation_loss(self, validation_data:list):
+    def validation_loss(self, validation_data: list):
         """Get mean loss value of the network over the validation data set.
 
         Args:
@@ -314,6 +315,17 @@ class Network:
             loss += self.loss(activation, y)
         loss /= len(validation_data)
         return loss
+
+
+def save(network: Network, path: str = "network"):
+    with open(path, "wb") as file:
+        pickle.dump(network, file)
+
+
+def load(path: str = "network"):
+    with open(path, "rb") as file:
+        network = pickle.load(file)
+    return network
 
 
 def glorot(n, m):
