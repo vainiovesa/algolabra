@@ -127,19 +127,19 @@ class Network:
 
     def vanilla_gradient_descent(self,
                                  training_data: list,
-                                 validation_data: list,
                                  epochs: int,
-                                 lr: float):
+                                 lr: float,
+                                 validation_data: list = None):
         """Gradient descent for training the neural network. 
 
         The weights and biases are updated only after going through the whole training data set.
 
         Args:
             training_data (list): List of tuples; tuples of np.ndarray; inputs and expected outputs.
-            validation_data (list): List of tuples; tuples of np.ndarray; inputs and expected
-            outputs.
             epochs (int): Number of times the data set is iterated through.
             lr (float): Learning rate.
+            validation_data (list, optional): List of tuples; tuples of np.ndarray; inputs and
+            expected outputs. Defaults to None.
 
         Returns:
             tuple: Tuple of list; list of np.float64; mean loss and validation loss value of each
@@ -158,9 +158,9 @@ class Network:
             loss_this_epoch = 0
 
             for inp, ex in training_data:
-                weight_derivatives, bias_derivatives, training_loss = self.gradient_calculation(
+                weight_derivatives, bias_derivatives, loss = self.gradient_calculation(
                     inp, ex)
-                loss_this_epoch += training_loss
+                loss_this_epoch += loss
 
                 for i in range(self.n_layers - 1):
                     gradient_wrt_weights[i] += weight_derivatives[i]
@@ -172,7 +172,8 @@ class Network:
 
             loss_this_epoch /= n
             training_loss.append(loss_this_epoch)
-            validation_loss.append(self.validation_loss(validation_data))
+            if validation_data:
+                validation_loss.append(self.validation_loss(validation_data))
 
             self.update_weights_and_biases(
                 gradient_wrt_weights, gradient_wrt_biases, lr)
@@ -181,19 +182,19 @@ class Network:
 
     def stochastic_gradient_descent(self,
                                     training_data: list,
-                                    validation_data: list,
                                     epochs: int,
-                                    lr: float):
+                                    lr: float,
+                                    validation_data: list = None):
         """Gradient descent for training the neural network.
 
         The weights and biases are updated after every training example.
 
         Args:
             training_data (list): List of tuples; tuples of np.ndarray; inputs and expected outputs.
-            validation_data (list): List of tuples; tuples of np.ndarray; inputs and expected
-            outputs.
             epochs (int): Number of times the data set is iterated through.
             lr (float): Learning rate.
+            validation_data (list, optional): List of tuples; tuples of np.ndarray; inputs and
+            expected outputs. Defaults to None.
 
         Returns:
             tuple: Tuple of list; list of np.float64; mean loss and validation loss value of each
@@ -218,16 +219,17 @@ class Network:
 
             loss_this_epoch /= n
             training_loss.append(loss_this_epoch)
-            validation_loss.append(self.validation_loss(validation_data))
+            if validation_data:
+                validation_loss.append(self.validation_loss(validation_data))
 
         return training_loss, validation_loss
 
     def minibatch_gradient_descent(self,
                                    training_data: list,
-                                   validation_data: list,
                                    minibatch_size: int,
                                    epochs: int,
-                                   lr: float):
+                                   lr: float,
+                                   validation_data: list=None):
         """Gradient descent for training the neural network.
 
         The training data is split into batches and the weights and biases are updated after each
@@ -235,11 +237,11 @@ class Network:
 
         Args:
             training_data (list): List of tuples; tuples of np.ndarray; inputs and expected outputs.
-            validation_data (list): List of tuples; tuples of np.ndarray; inputs and expected
-            outputs.
             minibatch_size (int): Number of training examples in one mini batch.
             epochs (int): Number of times the data set is iterated through.
             lr (float): Learning rate.
+            validation_data (list, optional): List of tuples; tuples of np.ndarray; inputs and
+            expected outputs. Defaults to None.
 
         Returns:
             tuple: Tuple of list; list of np.float64; mean loss and validation loss value of each
@@ -279,7 +281,8 @@ class Network:
 
             loss_this_epoch /= n
             training_loss.append(loss_this_epoch)
-            validation_loss.append(self.validation_loss(validation_data))
+            if validation_data:
+                validation_loss.append(self.validation_loss(validation_data))
 
         return training_loss, validation_loss
 
