@@ -343,12 +343,12 @@ class Network:
         return correct, incorrect
 
 
-def save(network: Network, path: str = "network"):
+def save(network: Network, path: str = "neuralnetwork"):
     with open(path, "wb") as file:
         pickle.dump(network, file)
 
 
-def load(path: str = "network"):
+def load(path: str = "neuralnetwork"):
     with open(path, "rb") as file:
         network = pickle.load(file)
     return network
