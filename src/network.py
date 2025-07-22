@@ -316,6 +316,32 @@ class Network:
         loss /= len(validation_data)
         return loss
 
+    def test_classification(self, testing_data: list):
+        """See which testing examples the network classifies right and which ones wrong.
+
+        Suitable only for testing classification tasks such as digit recognition.
+
+        Args:
+            testing_data (list): List of tuples; tuples of np.ndarray; inputs and
+            expected outputs.
+
+        Returns:
+            tuple: Tuple of list: list of tuples; tuples of np.ndarray; training examples classified
+            correctly and incorrectly in format [(x, y), ... ], [(x, y, incorr_activation), ... ]
+        """
+        correct = []
+        incorrect = []
+        for x, y in testing_data:
+            activation = self.evaluate(x)
+            y = np.argmax(y)
+            a = np.argmax(activation)
+
+            if a == y:
+                correct.append((x, y))
+            else:
+                incorrect.append((x, y, activation))
+        return correct, incorrect
+
 
 def save(network: Network, path: str = "network"):
     with open(path, "wb") as file:
