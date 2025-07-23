@@ -8,6 +8,8 @@ class Ui:
     def __init__(self):
         self.net = Network([784, 32, 16, 10])
         self.training_data, self.validation_data, self.testing_data = get_data()
+        self.training_loss = []
+        self.validation_loss = []
 
         self.instructions = "Instructions: \n"
         self.instructions += "0 = Quit \n"
@@ -87,10 +89,14 @@ class Ui:
             training_loss, validation_loss = self.net.minibatch_gradient_descent(
                 self.training_data, minibatch_size, epochs, lr, self.validation_data)
 
+        self.training_loss += training_loss
+        self.validation_loss += validation_loss
+        n = len(self.training_loss)
+
         print("Training completed \n")
-        plt.plot(training_loss, label="Training loss")
-        plt.plot(validation_loss, label="Validation loss")
-        plt.xticks(range(epochs), range(1, epochs + 1))
+        plt.plot(self.training_loss, label="Training loss")
+        plt.plot(self.validation_loss, label="Validation loss")
+        plt.xticks(range(n), range(1, n + 1))
         plt.legend()
         plt.grid()
         plt.show()
