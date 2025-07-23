@@ -174,7 +174,7 @@ class Network:
             loss_this_epoch /= n
             training_loss.append(loss_this_epoch)
             if validation_data:
-                validation_loss.append(self.validation_loss(validation_data))
+                validation_loss.append(self.validation_accuracy(validation_data))
 
             self.update_weights_and_biases(
                 gradient_wrt_weights, gradient_wrt_biases, lr)
@@ -221,7 +221,7 @@ class Network:
             loss_this_epoch /= n
             training_loss.append(loss_this_epoch)
             if validation_data:
-                validation_loss.append(self.validation_loss(validation_data))
+                validation_loss.append(self.validation_accuracy(validation_data))
 
         return training_loss, validation_loss
 
@@ -283,7 +283,7 @@ class Network:
             loss_this_epoch /= n
             training_loss.append(loss_this_epoch)
             if validation_data:
-                validation_loss.append(self.validation_loss(validation_data))
+                validation_loss.append(self.validation_accuracy(validation_data))
 
         return training_loss, validation_loss
 
@@ -315,6 +315,27 @@ class Network:
             loss += self.loss(activation, y)
         loss /= len(validation_data)
         return loss
+
+    def validation_accuracy(self, validation_data: list):
+        """Get the accuracy of the network over the validation data set.
+
+        Args:
+            validation_data (list): List of tuples; tuples of np.ndarray; inputs and expected
+            outputs.
+
+        Returns:
+            float: Accuracy.
+        """
+        correct = 0
+        n = len(validation_data)
+        for x, y in validation_data:
+            activation = self.evaluate(x)
+            y = np.argmax(y)
+            a = np.argmax(activation)
+
+            if a == y:
+                correct += 1
+        return correct / n
 
     def test_classification(self, testing_data: list):
         """See which testing examples the network classifies right and which ones wrong.

@@ -9,7 +9,7 @@ class Ui:
         self.net = Network([784, 32, 16, 10])
         self.training_data, self.validation_data, self.testing_data = get_data()
         self.training_loss = []
-        self.validation_loss = []
+        self.validation_accuracy = []
 
         self.instructions = "Instructions: \n"
         self.instructions += "0 = Quit \n"
@@ -91,34 +91,34 @@ class Ui:
             return
 
         print("Enter amount of epochs:")
-        epochs = self.get_integer_input(2, 500)
+        epochs = self.get_integer_input(1, 500)
 
         print("Enter learning rate:")
         lr = self.get_float_input(0.00001, 99)
 
         if action == 1:
             print("Training...")
-            training_loss, validation_loss = self.net.vanilla_gradient_descent(
+            training_loss, validation_accuracy = self.net.vanilla_gradient_descent(
                 self.training_data, epochs, lr, self.validation_data)
         elif action == 2:
             print("Training...")
-            training_loss, validation_loss = self.net.stochastic_gradient_descent(
+            training_loss, validation_accuracy = self.net.stochastic_gradient_descent(
                 self.training_data, epochs, lr, self.validation_data)
         else:
             print("Enter minibatch size:")
             minibatch_size = self.get_integer_input(1, len(self.training_data))
 
             print("Training...")
-            training_loss, validation_loss = self.net.minibatch_gradient_descent(
+            training_loss, validation_accuracy = self.net.minibatch_gradient_descent(
                 self.training_data, minibatch_size, epochs, lr, self.validation_data)
 
         self.training_loss += training_loss
-        self.validation_loss += validation_loss
+        self.validation_accuracy += validation_accuracy
         n = len(self.training_loss)
 
         print("Training completed \n")
         plt.plot(self.training_loss, label="Training loss")
-        plt.plot(self.validation_loss, label="Validation loss")
+        plt.plot(self.validation_accuracy, label="Validation accuracy")
         plt.xticks(range(n), range(1, n + 1))
         plt.legend()
         plt.grid()
