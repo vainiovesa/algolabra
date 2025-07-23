@@ -49,8 +49,31 @@ class Ui:
             print("No neural network saved. Continuing with new. \n")
 
     def create_new(self):
-        self.net = Network([784, 32, 16, 10])
-        print("New network created.")
+        print("Create new neural network?")
+        instr = "0 = cancel \n"
+        instr += "1 = proceed"
+
+        print(instr)
+
+        action = self.action(["0", "1"], instr)
+
+        if action == 0:
+            return
+
+        n_max = 10
+        print(f"Give hidden layer sizes (max {n_max} layers) (Return blank when ready)")
+        layers = [784]
+        for _ in range(n_max):
+            userinput = self.get_integer_input(1, 784, skip=True)
+            if userinput == "":
+                break
+
+            layers.append(userinput)
+            print(f"{userinput} appended to layers")
+
+        layers.append(10)
+        self.net = Network(layers)
+        print(f"New network with layers {layers} created.")
 
     def save_net(self):
         save(self.net)
