@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 from network import Network, load, save
 from data_handling import get_data
 
@@ -13,7 +14,8 @@ class Ui:
         self.instructions += "1 = Load saved neural network \n"
         self.instructions += "2 = Create new neural network \n"
         self.instructions += "3 = Save neural network \n"
-        self.instructions += "4 = Train neural network"
+        self.instructions += "4 = Train neural network \n"
+        self.instructions += "5 = Test neural network"
 
     def start(self):
 
@@ -21,7 +23,7 @@ class Ui:
 
         while True:
             print("Main selection:")
-            action = self.action(["0", "1", "2", "3", "4"], self.instructions)
+            action = self.action(["0", "1", "2", "3", "4", "5"], self.instructions)
 
             if action == 0:
                 break
@@ -34,6 +36,8 @@ class Ui:
                 self.save_net()
             elif action == 4:
                 self.train()
+            elif action == 5:
+                self.test()
 
     def load_saved(self):
         try:
@@ -51,13 +55,15 @@ class Ui:
         print("Network saved.")
 
     def train(self):
-        instructions = "Choose gradient descent algorithm: \n"
+        instructions = "Choose gradient descent algorithm: (0 = Cancel) \n"
         instructions += "1 = Vanilla \n"
         instructions += "2 = Stochastic \n"
         instructions += "3 = Minibatch"
         print(instructions)
 
-        action = self.action(["1", "2", "3"], instructions)
+        action = self.action(["0", "1", "2", "3"], instructions)
+        if action == 0:
+            return
 
         print("Enter amount of epochs:")
         epochs = self.get_integer_input(2, 500)
@@ -88,6 +94,49 @@ class Ui:
         plt.legend()
         plt.grid()
         plt.show()
+
+    def test(self):
+        correct, incorrect = self.net.test_classification(self.testing_data)
+
+        n = len(self.testing_data)
+        n_corr = len(correct)
+        n_incorr = len(incorrect)
+        print(f"The neural network classified {n_corr} images correctly.")
+        print(f"The neural network classified {n_incorr} images incorrectly.")
+        print(f"Accuracy: {n_corr / n * 100:.4f}%")
+        print()
+
+        i_corr = 0
+        i_incorr = 0
+        while True:
+            instr = "View images the network classified correctly/incorrectly: \n"
+            instr += "0 = stop \n"
+            instr += "1 = Correctly \n"
+            instr += "2 = Incorrectly"
+
+            print(instr)
+
+            action = self.action(["0", "1", "2"], instr)
+
+            if action == 0:
+                break
+
+            if action == 1:
+                img, label = correct[i_corr]
+                i_corr += 1
+                title = f"{i_corr}/{n_corr}, {label}"
+            else:
+                img, label, classification = incorrect[i_incorr]
+                i_incorr += 1
+                cl = np.argmax(classification)
+                title = f"{i_incorr}/{n_incorr}, "
+                title += f"{label} that the network classified as {cl}"
+
+            img = np.reshape(img, (28, 28))
+            plt.title(title)
+            plt.axis("off")
+            plt.imshow(img, cmap="grey_r")
+            plt.show()
 
     def action(self, choices: list, instructions: str):
         action = input("\n> ")
