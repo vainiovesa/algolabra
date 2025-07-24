@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
-from network import Network
-
+from network import Network, save, load
+from data_handling import get_test_data
 
 class TestNetwork(unittest.TestCase):
     def setUp(self):
@@ -9,8 +9,10 @@ class TestNetwork(unittest.TestCase):
         self.net = Network(self.layers)
         n = self.layers[0]
         m = self.layers[-1]
-        self.inputs = np.array([1 for _ in range(n)])
-        self.output = np.array([1 for _ in range(m)])
+        self.inputs1 = np.array([1 for _ in range(n)])
+        self.inputs2 = np.array([0.5 for _ in range(n)])
+        self.output1 = np.array([1 for _ in range(m)])
+        self.output2 = np.array([0.2 for _ in range(m)])
 
         self.small_net = Network([2, 3, 1])
         self.data = [(np.array([1, 1]), np.array([0])),
@@ -18,6 +20,9 @@ class TestNetwork(unittest.TestCase):
                      (np.array([1, 0]), np.array([1])),
                      (np.array([0, 0]), np.array([0]))]
         self.lr = 3
+
+        self.test_data = get_test_data()
+        self.mnist_net = Network([784, 10, 10])
 
     def test_weights_and_biases_right_type(self):
         for weight in self.net.weights:
@@ -34,24 +39,24 @@ class TestNetwork(unittest.TestCase):
             self.assertEqual(self.net.biases[i - 1].shape[0], self.layers[i])
 
     def test_activations_right_type(self):
-        activations = self.net.feed_forward(self.inputs)
+        activations = self.net.feed_forward(self.inputs1)
         for activation in activations:
             self.assertEqual(type(activation), np.ndarray)
 
     def test_activations_right_size(self):
-        activations = [self.inputs]
-        activations += self.net.feed_forward(self.inputs)
+        activations = [self.inputs1]
+        activations += self.net.feed_forward(self.inputs1)
         for activation, layer in zip(activations, self.layers):
             self.assertEqual(len(activation), layer)
 
     def test_deltas_right_size(self):
-        activations = self.net.feed_forward(self.inputs)
-        deltas = self.net.backward_pass(activations, self.output)
+        activations = self.net.feed_forward(self.inputs1)
+        deltas = self.net.backward_pass(activations, self.output1)
         for d, a in zip(deltas, activations):
             self.assertEqual(d.shape, a.shape)
 
     def test_gradient_right_size(self):
-        x, y = self.inputs, self.output
+        x, y = self.inputs1, self.output1
         weight_d, bias_d, _ = self.net.gradient_calculation(x, y)
         weights, biases = self.net.weights, self.net.biases
         for wd, bd, w, b in zip(weight_d, bias_d, weights, biases):
@@ -61,7 +66,7 @@ class TestNetwork(unittest.TestCase):
     def test_vanilla_gradient_descends(self):
         ep = 2000
         learning_data, _ = self.small_net.vanilla_gradient_descent(
-            self.data, ep, self.lr)
+            self.data, ep, self.lr, self.data)
         for i in range(1, ep):
             self.assertLess(learning_data[i], learning_data[i - 1])
         for x, y in self.data:
@@ -71,7 +76,7 @@ class TestNetwork(unittest.TestCase):
     def test_stochastic_gradient_descends(self):
         ep = 1000
         learning_data, _ = self.small_net.stochastic_gradient_descent(
-            self.data, ep, self.lr)
+            self.data, ep, self.lr, self.data)
         self.assertLess(learning_data[-1], learning_data[ep // 2])
         self.assertLess(learning_data[ep // 2], learning_data[0])
         for x, y in self.data:
@@ -82,9 +87,29 @@ class TestNetwork(unittest.TestCase):
         ep = 1500
         mb_size = 2
         learning_data, _ = self.small_net.minibatch_gradient_descent(
-            self.data, mb_size, ep, self.lr)
+            self.data, mb_size, ep, self.lr, self.data)
         self.assertLess(learning_data[-1], learning_data[ep // 2])
         self.assertLess(learning_data[ep // 2], learning_data[0])
         for x, y in self.data:
             rough_output = round(self.small_net.evaluate(x)[0])
             self.assertEqual(rough_output, y[0])
+
+    def test_save_and_load_work(self):
+        net1 = Network([2, 3, 2])
+        save(net1, "test_neuralnetwork")
+        net2 = load("test_neuralnetwork")
+        for w1, w2 in zip(net1.weights, net2.weights):
+            self.assertTrue((w1 == w2).all())
+        for b1, b2 in zip(net1.biases, net2.biases):
+            self.assertTrue((b1 == b2).all())
+
+    def test_overall_loss_reasonable(self):
+        data = [(self.inputs1, self.output1), (self.inputs2, self.output2)]
+        loss = self.net.overall_loss(data)
+        self.assertGreater(loss, 0)
+        self.assertLess(loss, self.layers[-1] ** 2)
+
+    def test_validation_accuracy_reasonable(self):
+        acc = self.mnist_net.validation_accuracy(self.test_data)
+        self.assertLessEqual(0, acc)
+        self.assertLessEqual(acc, 1)

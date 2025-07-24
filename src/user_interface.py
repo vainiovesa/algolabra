@@ -8,7 +8,7 @@ class Ui:
     def __init__(self):
         self.net = Network([784, 32, 16, 10])
         self.training_data, self.validation_data, self.testing_data = get_data()
-        initial_loss = self.net.validation_loss(self.training_data)
+        initial_loss = self.net.overall_loss(self.training_data)
         initial_accuracy = self.net.validation_accuracy(self.validation_data)
         self.training_loss = [initial_loss]
         self.validation_accuracy = [initial_accuracy]
@@ -77,7 +77,7 @@ class Ui:
         self.net = Network(layers)
         print(f"New network with layers {layers} created.")
 
-        initial_loss = self.net.validation_loss(self.training_data)
+        initial_loss = self.net.overall_loss(self.training_data)
         initial_accuracy = self.net.validation_accuracy(self.validation_data)
         self.training_loss = [initial_loss]
         self.validation_accuracy = [initial_accuracy]

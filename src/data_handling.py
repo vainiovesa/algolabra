@@ -47,3 +47,22 @@ def output_converter(y: int):
     """Convert expected output from an integer to np.ndarray for classification.
     """
     return np.array([0 if i != y else 1 for i in range(9 + 1)])
+
+
+def get_test_data(path: str = "data/mnist.pkl.gz"):
+    with gzip.open(path) as file:
+        _, data, _ = pickle.load(file, encoding="latin1")
+
+    test_data = test_data_converter(data)
+    return test_data
+
+
+def test_data_converter(data):
+    test_data = []
+    for x, y in zip(data[0], data[1]):
+        if y in (1, 2):
+            y = output_converter(y)
+            test_data.append((x, y))
+        if len(test_data) > 99:
+            break
+    return test_data

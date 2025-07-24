@@ -147,13 +147,11 @@ class Network:
             epoch.
         """
         training_loss = []
-        validation_loss = []
+        validation_accuracy = []
         n = len(training_data)
         training_data = training_data.copy()
 
         for _ in range(epochs):
-            shuffle(training_data)
-
             gradient_wrt_weights = [np.zeros_like(w) for w in self.weights]
             gradient_wrt_biases = [np.zeros_like(b) for b in self.biases]
             loss_this_epoch = 0
@@ -174,12 +172,12 @@ class Network:
             loss_this_epoch /= n
             training_loss.append(loss_this_epoch)
             if validation_data:
-                validation_loss.append(self.validation_accuracy(validation_data))
+                validation_accuracy.append(self.validation_accuracy(validation_data))
 
             self.update_weights_and_biases(
                 gradient_wrt_weights, gradient_wrt_biases, lr)
 
-        return training_loss, validation_loss
+        return training_loss, validation_accuracy
 
     def stochastic_gradient_descent(self,
                                     training_data: list,
@@ -202,7 +200,7 @@ class Network:
             epoch.
         """
         training_loss = []
-        validation_loss = []
+        validation_accuracy = []
         n = len(training_data)
         training_data = training_data.copy()
 
@@ -221,9 +219,9 @@ class Network:
             loss_this_epoch /= n
             training_loss.append(loss_this_epoch)
             if validation_data:
-                validation_loss.append(self.validation_accuracy(validation_data))
+                validation_accuracy.append(self.validation_accuracy(validation_data))
 
-        return training_loss, validation_loss
+        return training_loss, validation_accuracy
 
     def minibatch_gradient_descent(self,
                                    training_data: list,
@@ -249,7 +247,7 @@ class Network:
             epoch.
         """
         training_loss = []
-        validation_loss = []
+        validation_accuracy = []
         n = len(training_data)
         training_data = training_data.copy()
 
@@ -283,9 +281,9 @@ class Network:
             loss_this_epoch /= n
             training_loss.append(loss_this_epoch)
             if validation_data:
-                validation_loss.append(self.validation_accuracy(validation_data))
+                validation_accuracy.append(self.validation_accuracy(validation_data))
 
-        return training_loss, validation_loss
+        return training_loss, validation_accuracy
 
     def update_weights_and_biases(self, new_w: list, new_b: list, lr: float):
         """Update all the weights and biases of the network to descend the gradient.
@@ -299,7 +297,7 @@ class Network:
             self.weights[i] -= lr * new_w[i]
             self.biases[i] -= lr * new_b[i]
 
-    def validation_loss(self, validation_data: list):
+    def overall_loss(self, validation_data: list):
         """Get mean loss value of the network over the validation data set.
 
         Args:
@@ -316,19 +314,18 @@ class Network:
         loss /= len(validation_data)
         return loss
 
-    def validation_accuracy(self, validation_data: list):
+    def validation_accuracy(self, data: list):
         """Get the accuracy of the network over the validation data set.
 
         Args:
-            validation_data (list): List of tuples; tuples of np.ndarray; inputs and expected
-            outputs.
+            data (list): List of tuples; tuples of np.ndarray; inputs and expected outputs.
 
         Returns:
             float: Accuracy.
         """
         correct = 0
-        n = len(validation_data)
-        for x, y in validation_data:
+        n = len(data)
+        for x, y in data:
             activation = self.evaluate(x)
             y = np.argmax(y)
             a = np.argmax(activation)
