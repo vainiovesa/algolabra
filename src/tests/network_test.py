@@ -76,7 +76,7 @@ class TestNetwork(unittest.TestCase):
     def test_stochastic_gradient_descends(self):
         ep = 1000
         learning_data, _ = self.small_net.stochastic_gradient_descent(
-            self.data, ep, self.lr, self.data)
+            self.data, ep, self.lr)
         self.assertLess(learning_data[-1], learning_data[ep // 2])
         self.assertLess(learning_data[ep // 2], learning_data[0])
         for x, y in self.data:
@@ -113,3 +113,30 @@ class TestNetwork(unittest.TestCase):
         acc = self.mnist_net.validation_accuracy(self.test_data)
         self.assertLessEqual(0, acc)
         self.assertLessEqual(acc, 1)
+
+    def test_model_overfits_vanilla(self):
+        for _ in range(50):
+            _, accuracy_list = self.mnist_net.vanilla_gradient_descent(
+                self.test_data, 3, 0.1, self.test_data)
+            accuracy = accuracy_list[0]
+            if accuracy == 1:
+                break
+        self.assertEqual(accuracy, 1)
+
+    def test_model_overfits_stochastic(self):
+        for _ in range(50):
+            _, accuracy_list = self.mnist_net.stochastic_gradient_descent(
+                self.test_data, 1, 0.1, self.test_data)
+            accuracy = accuracy_list[0]
+            if accuracy == 1:
+                break
+        self.assertEqual(accuracy, 1)
+
+    def test_model_overfits_minibatch(self):
+        for _ in range(50):
+            _, accuracy_list = self.mnist_net.minibatch_gradient_descent(
+                self.test_data, 10, 1, 1, self.test_data)
+            accuracy = accuracy_list[0]
+            if accuracy == 1:
+                break
+        self.assertEqual(accuracy, 1)
