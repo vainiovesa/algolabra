@@ -66,7 +66,7 @@ class TestNetwork(unittest.TestCase):
     def test_vanilla_gradient_descends(self):
         ep = 2000
         learning_data, _ = self.small_net.vanilla_gradient_descent(
-            self.data, ep, self.lr, self.data)
+            self.data, ep, self.lr)
         for i in range(1, ep):
             self.assertLess(learning_data[i], learning_data[i - 1])
         for x, y in self.data:
@@ -87,7 +87,7 @@ class TestNetwork(unittest.TestCase):
         ep = 1500
         mb_size = 2
         learning_data, _ = self.small_net.minibatch_gradient_descent(
-            self.data, mb_size, ep, self.lr, self.data)
+            self.data, mb_size, ep, self.lr)
         self.assertLess(learning_data[-1], learning_data[ep // 2])
         self.assertLess(learning_data[ep // 2], learning_data[0])
         for x, y in self.data:
@@ -115,7 +115,7 @@ class TestNetwork(unittest.TestCase):
         self.assertLessEqual(acc, 1)
 
     def test_model_overfits_vanilla(self):
-        for _ in range(50):
+        for _ in range(100):
             _, accuracy_list = self.mnist_net.vanilla_gradient_descent(
                 self.test_data, 3, 0.1, self.test_data)
             accuracy = accuracy_list[0]
@@ -132,7 +132,9 @@ class TestNetwork(unittest.TestCase):
                 break
         self.assertEqual(accuracy, 1)
 
-    def test_model_overfits_minibatch(self):
+    def test_model_overfits_minibatch_and_classificationtest_works(self):
+        corr, incorr = self.mnist_net.test_classification(self.test_data)
+        self.assertEqual(len(corr) + len(incorr), len(self.test_data))
         for _ in range(50):
             _, accuracy_list = self.mnist_net.minibatch_gradient_descent(
                 self.test_data, 10, 1, 1, self.test_data)
@@ -140,3 +142,6 @@ class TestNetwork(unittest.TestCase):
             if accuracy == 1:
                 break
         self.assertEqual(accuracy, 1)
+        corr, incorr = self.mnist_net.test_classification(self.test_data)
+        self.assertEqual(len(corr), len(self.test_data))
+        self.assertEqual(len(incorr), 0)
