@@ -8,8 +8,10 @@ class Ui:
     def __init__(self):
         self.net = Network([784, 32, 16, 10])
         self.training_data, self.validation_data, self.testing_data = get_data()
-        self.training_loss = []
-        self.validation_accuracy = []
+        initial_loss = self.net.validation_loss(self.training_data)
+        initial_accuracy = self.net.validation_accuracy(self.validation_data)
+        self.training_loss = [initial_loss]
+        self.validation_accuracy = [initial_accuracy]
 
         self.instructions = "Instructions: \n"
         self.instructions += "0 = Quit \n"
@@ -75,6 +77,11 @@ class Ui:
         self.net = Network(layers)
         print(f"New network with layers {layers} created.")
 
+        initial_loss = self.net.validation_loss(self.training_data)
+        initial_accuracy = self.net.validation_accuracy(self.validation_data)
+        self.training_loss = [initial_loss]
+        self.validation_accuracy = [initial_accuracy]
+
     def save_net(self):
         save(self.net)
         print("Network saved.")
@@ -114,14 +121,22 @@ class Ui:
 
         self.training_loss += training_loss
         self.validation_accuracy += validation_accuracy
-        n = len(self.training_loss)
 
         print("Training completed \n")
-        plt.plot(self.training_loss, label="Training loss")
-        plt.plot(self.validation_accuracy, label="Validation accuracy")
-        plt.xticks(range(n), range(1, n + 1))
-        plt.legend()
-        plt.grid()
+
+        fig, ax1 = plt.subplots()
+        ax1.set_xlabel("Epochs")
+        ax1.set_ylabel("Training loss", color="navy")
+        ax1.set_ylim(0, max(self.training_loss))
+        ax1.plot(self.training_loss, color="navy")
+
+        ax2 = ax1.twinx()
+        ax2.set_ylabel("Validation accuracy", color="orangered")
+        ax2.set_ylim(0, 1)
+        ax2.plot(self.validation_accuracy, color="orangered")
+
+        fig.tight_layout()
+        ax1.grid()
         plt.show()
 
     def test(self):
