@@ -50,6 +50,15 @@ def output_converter(y: int):
 
 
 def get_test_data(path: str = "data/mnist.pkl.gz"):
+    """Get data for automated tests from the mnist data set.
+
+    Args:
+        path (str, optional): Path to mnist. Defaults to "data/mnist.pkl.gz".
+
+    Returns:
+        list: List of tuples; tuples of np.ndarray; Inputs and expected outputs in format
+        [(x, y), ...]. Consists only of ones and twos.
+    """
     with gzip.open(path) as file:
         _, data, _ = pickle.load(file, encoding="latin1")
 
@@ -58,6 +67,10 @@ def get_test_data(path: str = "data/mnist.pkl.gz"):
 
 
 def test_data_converter(data):
+    """Convert test data into the format suitable for a neural network of network.Network class.
+
+    Returns a list of length 100 consisting only of ones and twos of the mnist data set.
+    """
     test_data = []
     for x, y in zip(data[0], data[1]):
         if y in (1, 2):

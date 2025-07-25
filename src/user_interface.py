@@ -4,9 +4,21 @@ from network import Network, load, save
 from data_handling import get_data
 
 
+# Layers of the neural network that is created by default.
+DEFAULT_LAYERS = [784, 16, 16, 10]
+
 class Ui:
+    """User interface for training, testing, creating, saving and loading neural networks to
+    classify the hand written digits of the mnist data set.
+    """
+
     def __init__(self):
-        self.net = Network([784, 32, 16, 10])
+        """Class constructor for the user interface.
+
+        Creates the default network, fetches the mnist data set and gets a baseline for the
+        network's accuracy.
+        """
+        self.net = Network(DEFAULT_LAYERS)
         self.training_data, self.validation_data, self.testing_data = get_data()
         initial_loss = self.net.overall_loss(self.training_data)
         initial_accuracy = self.net.validation_accuracy(self.validation_data)
