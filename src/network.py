@@ -172,7 +172,8 @@ class Network:
             loss_this_epoch /= n
             training_loss.append(loss_this_epoch)
             if validation_data:
-                validation_accuracy.append(self.validation_accuracy(validation_data))
+                validation_accuracy.append(
+                    self.validation_accuracy(validation_data))
 
             self.update_weights_and_biases(
                 gradient_wrt_weights, gradient_wrt_biases, lr)
@@ -219,7 +220,8 @@ class Network:
             loss_this_epoch /= n
             training_loss.append(loss_this_epoch)
             if validation_data:
-                validation_accuracy.append(self.validation_accuracy(validation_data))
+                validation_accuracy.append(
+                    self.validation_accuracy(validation_data))
 
         return training_loss, validation_accuracy
 
@@ -281,7 +283,8 @@ class Network:
             loss_this_epoch /= n
             training_loss.append(loss_this_epoch)
             if validation_data:
-                validation_accuracy.append(self.validation_accuracy(validation_data))
+                validation_accuracy.append(
+                    self.validation_accuracy(validation_data))
 
         return training_loss, validation_accuracy
 

@@ -7,6 +7,7 @@ from data_handling import get_data
 # Layers of the neural network that is created by default.
 DEFAULT_LAYERS = [784, 16, 16, 10]
 
+
 class Ui:
     """User interface for training, testing, creating, saving and loading neural networks to
     classify the hand written digits of the mnist data set.
@@ -39,7 +40,8 @@ class Ui:
 
         while True:
             print("Main selection:")
-            action = self.action(["0", "1", "2", "3", "4", "5"], self.instructions)
+            action = self.action(
+                ["0", "1", "2", "3", "4", "5"], self.instructions)
 
             if action == 0:
                 break
@@ -75,7 +77,8 @@ class Ui:
             return
 
         n_max = 10
-        print(f"Give hidden layer sizes (max {n_max} layers) (Return blank when ready)")
+        print(
+            f"Give hidden layer sizes (max {n_max} layers) (Return blank when ready)")
         layers = [784]
         for _ in range(n_max):
             userinput = self.get_integer_input(1, 784, skip=True)
@@ -115,19 +118,19 @@ class Ui:
         print("Enter learning rate:")
         lr = self.get_float_input(0.00001, 99)
 
-        if action == 1:
-            print("Training...")
-            training_loss, validation_accuracy = self.net.vanilla_gradient_descent(
-                self.training_data, epochs, lr, self.validation_data)
-        elif action == 2:
-            print("Training...")
-            training_loss, validation_accuracy = self.net.stochastic_gradient_descent(
-                self.training_data, epochs, lr, self.validation_data)
-        else:
+        minibatch_size = None
+        if action == 3:
             print("Enter minibatch size:")
             minibatch_size = self.get_integer_input(1, len(self.training_data))
 
-            print("Training...")
+        print("Training...")
+        if action == 1:
+            training_loss, validation_accuracy = self.net.vanilla_gradient_descent(
+                self.training_data, epochs, lr, self.validation_data)
+        elif action == 2:
+            training_loss, validation_accuracy = self.net.stochastic_gradient_descent(
+                self.training_data, epochs, lr, self.validation_data)
+        else:
             training_loss, validation_accuracy = self.net.minibatch_gradient_descent(
                 self.training_data, minibatch_size, epochs, lr, self.validation_data)
 

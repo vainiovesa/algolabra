@@ -3,6 +3,7 @@ import numpy as np
 from network import Network, save, load
 from data_handling import get_test_data
 
+
 class TestNetwork(unittest.TestCase):
     def setUp(self):
         self.layers = [10, 5, 6, 3, 4]
