@@ -2,3 +2,5 @@ __pycache__
 .coverage
 neuralnetwork
 test_neuralnetwork
+.pytest_cache
+.hypothesis

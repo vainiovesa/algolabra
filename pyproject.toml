@@ -22,4 +22,5 @@ pytest = "^8.4.1"
 coverage = "^7.9.2"
 pylint = "^3.3.7"
 autopep8 = "^2.3.2"
+hypothesis = "^6.136.4"
 
