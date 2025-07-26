@@ -25,3 +25,12 @@ Testataan, että neuroverkon laskema tarkkuus on järkevissä rajoissa (0 - 1).
 Testataan, että kaikki gradienttimenetelmät ylisovittuvat dataan luokittelutarkkuudella 1.
 
 Testataan, että neuroverkon testiluokittelu palauttaa järkevät listat.
+
+### Invarianttitestit
+![coverage_invariant_26_7](coverage_report_invariant_26_7.png)
+
+Testit kattavat kaikki neuroverkon gradienttimenetelmään liittyvät metodit, lukuunottamatta vahvistusdatan käsittelyä, jolla ei ole neuroverkon parametrien kannalta merkitystä.
+
+Testataan, että erikokoisilla neuroverkoilla kaikki painot ja vakiotermit muuttuvat kaikkien gradienttimenetelmien aikana.
+* Verkot ovat kooltaan välillä pienin mahdollinen - suurin mahdollinen, joka voidaan luoda käyttöliittymässä.
+* Testidatana sata MNIST-tietokannan kuvaa ykkösistä ja kakkosista.
