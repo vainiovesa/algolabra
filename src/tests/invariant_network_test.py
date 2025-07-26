@@ -16,7 +16,7 @@ def make_net(draw):
 
 @given(make_net())
 @settings(deadline=None)
-def test_nets_params_change(net):
+def test_nets_params_change_vanilla(net):
     weights1 = []
     for w in net.weights:
         weights1.append(w.copy())
@@ -25,6 +25,54 @@ def test_nets_params_change(net):
         biases1.append(b.copy())
 
     net.vanilla_gradient_descent(DATA, epochs=1, lr=3)
+
+    weights2 = []
+    for w in net.weights:
+        weights2.append(w.copy())
+    biases2 = []
+    for b in net.biases:
+        biases2.append(b.copy())
+
+    for w1, w2 in zip(weights1, weights2):
+        assert not np.array_equal(w1, w2)
+    for b1, b2 in zip(biases1, biases2):
+        assert not np.array_equal(b1, b2)
+
+@given(make_net())
+@settings(deadline=None)
+def test_nets_params_change_stochastic(net):
+    weights1 = []
+    for w in net.weights:
+        weights1.append(w.copy())
+    biases1 = []
+    for b in net.biases:
+        biases1.append(b.copy())
+
+    net.stochastic_gradient_descent(DATA, epochs=1, lr=3)
+
+    weights2 = []
+    for w in net.weights:
+        weights2.append(w.copy())
+    biases2 = []
+    for b in net.biases:
+        biases2.append(b.copy())
+
+    for w1, w2 in zip(weights1, weights2):
+        assert not np.array_equal(w1, w2)
+    for b1, b2 in zip(biases1, biases2):
+        assert not np.array_equal(b1, b2)
+
+@given(make_net())
+@settings(deadline=None)
+def test_nets_params_change_minibatch(net):
+    weights1 = []
+    for w in net.weights:
+        weights1.append(w.copy())
+    biases1 = []
+    for b in net.biases:
+        biases1.append(b.copy())
+
+    net.minibatch_gradient_descent(DATA, minibatch_size=10, epochs=1, lr=3)
 
     weights2 = []
     for w in net.weights:
