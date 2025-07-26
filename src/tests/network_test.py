@@ -100,9 +100,9 @@ class TestNetwork(unittest.TestCase):
         save(net1, "test_neuralnetwork")
         net2 = load("test_neuralnetwork")
         for w1, w2 in zip(net1.weights, net2.weights):
-            self.assertTrue((w1 == w2).all())
+            self.assertTrue(np.array_equal(w1, w2))
         for b1, b2 in zip(net1.biases, net2.biases):
-            self.assertTrue((b1 == b2).all())
+            self.assertTrue(np.array_equal(b1, b2))
 
     def test_overall_loss_reasonable(self):
         data = [(self.inputs1, self.output1), (self.inputs2, self.output2)]
