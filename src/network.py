@@ -30,7 +30,7 @@ class Network:
         self.biases = []
 
         for i in range(1, self.n_layers):
-            weights = glorot(layers[i - 1], layers[i])
+            weights = _glorot(layers[i - 1], layers[i])
             self.weights.append(weights)
 
             biases = np.zeros(layers[i])
@@ -45,12 +45,10 @@ class Network:
         Returns:
             list: List of np.ndarray; activations of each layer of the neural network.
         """
-        assert len(x) == self.n_inputs
-
         activations = []
         for w, b in zip(self.weights, self.biases):
             z = np.dot(w, x) + b
-            a = sigmoid(z)
+            a = _sigmoid(z)
             activations.append(a)
             x = a
         return activations
@@ -66,7 +64,7 @@ class Network:
         """
         return self.feed_forward(x)[-1]
 
-    def loss(self, a: np.ndarray, a_hat: np.ndarray):
+    def _loss(self, a: np.ndarray, a_hat: np.ndarray):
         """Quadratic loss function.
 
         Args:
@@ -78,7 +76,7 @@ class Network:
         """
         return np.sum((a - a_hat) ** 2)
 
-    def backward_pass(self, activations: list, a_hat: np.ndarray):
+    def _backward_pass(self, activations: list, a_hat: np.ndarray):
         """Get all delta values for calculating the gradient w.r.t each weight and bias.
 
         Args:
@@ -106,7 +104,7 @@ class Network:
         delta_l.reverse()
         return delta_l
 
-    def gradient_calculation(self, x: np.ndarray, a_hat: np.ndarray):
+    def _gradient_calculation(self, x: np.ndarray, a_hat: np.ndarray):
         """Get the gradient with respect to each weight and bias in the network.
 
         Args:
@@ -117,8 +115,8 @@ class Network:
             tuple: Two lists and np.float64; gradient w.r.t the weights and biases, loss.
         """
         activations = self.feed_forward(x)
-        loss = self.loss(activations[-1], a_hat)
-        deltas = self.backward_pass(activations, a_hat)
+        loss = self._loss(activations[-1], a_hat)
+        deltas = self._backward_pass(activations, a_hat)
         weight_derivatives = []
 
         for delta, acts in zip(deltas, [x] + activations):
@@ -157,7 +155,7 @@ class Network:
             loss_this_epoch = 0
 
             for inp, ex in training_data:
-                weight_derivatives, bias_derivatives, loss = self.gradient_calculation(
+                weight_derivatives, bias_derivatives, loss = self._gradient_calculation(
                     inp, ex)
                 loss_this_epoch += loss
 
@@ -175,7 +173,7 @@ class Network:
                 validation_accuracy.append(
                     self.validation_accuracy(validation_data))
 
-            self.update_weights_and_biases(
+            self._update_weights_and_biases(
                 gradient_wrt_weights, gradient_wrt_biases, lr)
 
         return training_loss, validation_accuracy
@@ -211,10 +209,10 @@ class Network:
             loss_this_epoch = 0
 
             for inp, ex in training_data:
-                weight_derivatives, bias_derivatives, loss = self.gradient_calculation(
+                weight_derivatives, bias_derivatives, loss = self._gradient_calculation(
                     inp, ex)
                 loss_this_epoch += loss
-                self.update_weights_and_biases(
+                self._update_weights_and_biases(
                     weight_derivatives, bias_derivatives, lr)
 
             loss_this_epoch /= n
@@ -266,7 +264,7 @@ class Network:
 
                 for inp, ex in minibatch:
                     weight_derivatives, bias_derivatives, loss = \
-                        self.gradient_calculation(inp, ex)
+                        self._gradient_calculation(inp, ex)
                     loss_this_epoch += loss
 
                     for i in range(self.n_layers - 1):
@@ -277,7 +275,7 @@ class Network:
                     gradient_wrt_weights[i] /= minibatch_size
                     gradient_wrt_biases[i] /= minibatch_size
 
-                self.update_weights_and_biases(
+                self._update_weights_and_biases(
                     gradient_wrt_weights, gradient_wrt_biases, lr)
 
             loss_this_epoch /= n
@@ -288,7 +286,7 @@ class Network:
 
         return training_loss, validation_accuracy
 
-    def update_weights_and_biases(self, new_w: list, new_b: list, lr: float):
+    def _update_weights_and_biases(self, new_w: list, new_b: list, lr: float):
         """Update all the weights and biases of the network to descend the gradient.
 
         Args:
@@ -313,7 +311,7 @@ class Network:
         loss = 0
         for x, y in validation_data:
             activation = self.evaluate(x)
-            loss += self.loss(activation, y)
+            loss += self._loss(activation, y)
         loss /= len(validation_data)
         return loss
 
@@ -375,7 +373,7 @@ def load(path: str = "neuralnetwork"):
     return network
 
 
-def glorot(n, m):
+def _glorot(n, m):
     """Weight initialization function suitable for neural network layers using the sigmoid
     activation function.
 
@@ -391,7 +389,7 @@ def glorot(n, m):
     return np.random.uniform(a, b, (m, n))
 
 
-def sigmoid(z: np.ndarray):
+def _sigmoid(z: np.ndarray):
     """Activation function for the neural network to introduce nonlinearity.
 
     Args:

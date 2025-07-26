@@ -52,13 +52,13 @@ class TestNetwork(unittest.TestCase):
 
     def test_deltas_right_size(self):
         activations = self.net.feed_forward(self.inputs1)
-        deltas = self.net.backward_pass(activations, self.output1)
+        deltas = self.net._backward_pass(activations, self.output1)
         for d, a in zip(deltas, activations):
             self.assertEqual(d.shape, a.shape)
 
     def test_gradient_right_size(self):
         x, y = self.inputs1, self.output1
-        weight_d, bias_d, _ = self.net.gradient_calculation(x, y)
+        weight_d, bias_d, _ = self.net._gradient_calculation(x, y)
         weights, biases = self.net.weights, self.net.biases
         for wd, bd, w, b in zip(weight_d, bias_d, weights, biases):
             self.assertEqual(wd.shape, w.shape)
