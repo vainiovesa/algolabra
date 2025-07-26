@@ -1,7 +1,7 @@
 ## Testausdokumentti
 
 ### Yksikkötestit
-![coverage_24_7](coverage_report_24_7.png)
+![coverage_26_7](coverage_report_26_7.png)
 
 Testataan, että neuroverkko muodostuu oikein, niin että
 * painot ja vakiotermit ovat oikeantyyppisiä
