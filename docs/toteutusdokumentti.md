@@ -17,7 +17,7 @@ Datankäsittelymoduuli lataa MNIST-tietokannan kuvat ja muuttaa ne neuroverkolle
 Neuroverkko ja sen syöte pysyy aina samankokoisena, joten sen tila ja nopeus pysyvät vakioina.
 
 ### Työn mahdolliset puutteet ja parannusehdotukset
-- Muut aktivointi- ja tappiofunktiot
+Neuroverkko käyttää vain sigmoid-aktivointifunktiota ja neliövirhe-tappiofunktiota.
 
 ### Laajojen kielimallien käyttö
 Tässä projektissa ei ole käytetty laajoja kielimalleja.
