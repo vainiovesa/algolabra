@@ -1,5 +1,25 @@
 ## Testausdokumentti
 
+### Testien ajaminen
+Aluksi
+```console
+$ poetry shell
+```
+sitten:
+
+#### Yksikkötestit
+```console
+$ coverage run --branch -m pytest src/tests/network_test.py
+$ coverage html
+```
+
+#### Invarianttitestit
+Tämä testaa suuriakin neuroverkkoja, joten tämä vie hetken.
+```console
+$ coverage run --branch -m pytest src/tests/invariant_network_test.py
+$ coverage html
+```
+
 ### Yksikkötestit
 ![coverage_26_7](coverage_report_26_7.png)
 
@@ -34,3 +54,4 @@ Testit kattavat kaikki neuroverkon gradienttimenetelmään liittyvät metodit, l
 Testataan, että erikokoisilla neuroverkoilla kaikki painot ja vakiotermit muuttuvat kaikkien gradienttimenetelmien aikana.
 * Verkot ovat kooltaan välillä pienin mahdollinen - suurin mahdollinen, joka voidaan luoda käyttöliittymässä.
 * Testidatana sata MNIST-tietokannan kuvaa ykkösistä ja kakkosista.
+
