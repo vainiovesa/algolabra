@@ -38,7 +38,7 @@ Testataan, että verkon tallentaminen ja lataaminen toimii vertaamalla tallennet
 
 Testataan, että neuroverkon laskema tappio suppealla datalla on järkevissä rajoissa (0 - n ^ 2).
 
-Seuraavissa testeissä käytetään sataa MNIST-tietokannan kuvaa ykkösistä ja kakkosista.
+**Seuraavissa testeissä käytetään sataa MNIST-tietokannan kuvaa ykkösistä ja kakkosista.**
 
 Testataan, että neuroverkon laskema tarkkuus on järkevissä rajoissa (0 - 1).
 
@@ -55,3 +55,12 @@ Testataan, että erikokoisilla neuroverkoilla kaikki painot ja vakiotermit muutt
 * Verkot ovat kooltaan välillä pienin mahdollinen - suurin mahdollinen, joka voidaan luoda käyttöliittymässä.
 * Testidatana sata MNIST-tietokannan kuvaa ykkösistä ja kakkosista.
 
+### Manuaalinen testaus
+Neuroverkkoa on testattu käyttöliittymästä käsin.
+| size             | epochs | learning rate | minibatch size |
+|------------------|--------|---------------|----------------|
+| 784, 100, 50, 10 | 100    | 0.1           | 10             |
+
+Taulukon arvoilla luodulla neuroverkolla saavutetaan luokittelutarkkuus 97,91%.
+
+![nn100-50ep100lr0-1mbs10](nn100-50ep100lr0-1mbs10.png)
