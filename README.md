@@ -17,3 +17,5 @@
 [Viikkoraportti 4](/docs/Viikkoraportti4.md)
 
 [Viikkoraportti 5](/docs/Viikkoraportti5.md)
+
+[Viikkoraportti 6](/docs/Viikkoraportti6.md)
